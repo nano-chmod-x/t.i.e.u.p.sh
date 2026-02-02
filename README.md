@@ -4,10 +4,14 @@ AI Studio by ♾️🐜♾️(t.i.e.u.p.sh)♊Gemini ♊♾️Unlimited♾️Sta
 ```bash
 git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
 ```
-# Start Up Command is |   
-# ./tieup.sh*
+# Start Up Command is √|√  
+```
+./tieup.sh* 
+```
+```
 ```bash
 ./tieup.sh* 
+```
 ```
 ```bash
 #!/bin/bash
