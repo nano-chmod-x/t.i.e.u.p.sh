@@ -8,10 +8,9 @@ git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
 ```
 ./tieup.sh* 
 ```
-```
+
 ```bash
 ./tieup.sh* 
-```
 ```
 ```bash
 #!/bin/bash
