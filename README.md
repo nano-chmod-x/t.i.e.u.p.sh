@@ -1,8 +1,7 @@
 # t.i.e.u.p.sh
 AI Studio by ♾️🐜♾️(t.i.e.u.p.sh)♊Gemini ♊♾️Unlimited♾️Status 0x1_ROOT_GOD
 ```
-```bash
-git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
+bash git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
 ```
 # Start Up Command is √|√  
 ```
