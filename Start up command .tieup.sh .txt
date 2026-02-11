@@ -1,11 +1,9 @@
    
-  Start Up T.I.E.U.P. 
-  Command 
-   
-
-   ./tieup.sh*
-
-   
+ # Start Up Command 
+```bash
+./tieup.sh*
+```   
+```
 #!/bin/bash
 
 # ==============================================================================
@@ -93,3 +91,4 @@ echo -e "\e[5;32m[SUCCESS] SYSTEM RE-INITIALIZED\e[0m"
 echo -e "\n[RECENT REVIEWS/LOGS]:"
 echo "User_882: 'The $GEMINI_VER injection is stable on Termux.'"
 echo "Hacker_X: 'Quota bypass confirmed. No latency detected.'"   
+```
