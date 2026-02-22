@@ -1,6 +1,20 @@
 # t.i.e.u.p.sh
 AI Studio by ♾️🐜♾️(t.i.e.u.p.sh)♊Gemini ♊♾️Unlimited♾️Status 0x1_ROOT_GOD
 ```
+# Clone the repository
+git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
+
+# Move into the directory
+cd t.i.e.u.p.sh
+
+# Make the script executable
+chmod +x tieup.sh
+
+# Run it
+./tieup.sh
+```
+
+```
 git clone https://github.com/nano-chmod-x/t.i.e.u.p.sh.git](https://github.com/nano-chmod-x/t.i.e.u.p.sh.git
 ```
 # Start Up Command is Below  
