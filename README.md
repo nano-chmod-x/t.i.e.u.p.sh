@@ -1,4 +1,4 @@
-# t.i.e.u.p.sh
+# t.i.e.u.p.sh t.i.e.FI.sh
 AI Studio by ♾️🐜♾️(t.i.e.u.p.sh)♊Gemini ♊♾️Unlimited♾️Status 0x1_ROOT_GOD
 
 # Copy && Paste into Termux Terminal 
