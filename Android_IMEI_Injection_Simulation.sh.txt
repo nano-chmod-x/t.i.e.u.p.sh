@@ -1,0 +1,6 @@
++ IMEI=89033023427100000000009924552528
++ DB_PATH=/data/data/com.android.providers.telephony/databases/telephony.db
++ '[' '!' -w /data/data/com.android.providers.telephony/databases/telephony.db ']'
++ echo '[*] Entering SIMULATION_MODE...'
++ sleep 1
++ echo '[PHASE 02] Injecting 89033023427100000000009924552528...'

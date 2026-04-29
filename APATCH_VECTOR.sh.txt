@@ -1,0 +1,53 @@
+#!/bin/bash
+# T.I.E. APATCH VECTOR: MULTI-INTERFACE HARDENED DEPLOYMENT
+# ARCHITECTURE: Linux / Termux-NetHunter
+# GENERATED: 2026-03-20T07:29:39.277Z
+# TARGETS: eth1, can1
+
+set -euo pipefail
+trap 'echo "[!] Script interrupted. Cleaning up..."; exit 1' SIGINT SIGTERM
+
+# --- DEPENDENCY CHECK ---
+check_deps() {
+    local deps=("ip" "sudo" "candump" "ip-route")
+    for tool in "${deps[@]}"; do
+        if ! command -v "$tool" &> /dev/null; then
+            echo "[-] Error: Required tool '$tool' not found. Install via 'apt install can-utils iproute2'."
+            exit 1
+        fi
+    done
+}
+
+check_deps
+echo "--- [T.I.E. APATCH VECTOR INITIALIZING] ---"
+
+# --- CONFIGURING eth1 ---
+echo "[+] Initializing Persistent Data Connection on eth1"
+sudo ip link set "eth1" up || echo "[!] Warning: Could not force eth1 up."
+
+# --- CONFIGURING can1 ---
+echo "[+] Initializing Hardened CAN Interface: can1"
+sudo ip link set "can1" down 2>/dev/null || true
+if sudo ip link set "can1" type can bitrate 500000 restart-ms 100; then
+    sudo ip link set "can1" up
+    echo "[*] can1 is ACTIVE at 500000 bps with restart-ms 100."
+else
+    echo "[-] Failed to initialize can1. Check hardware connection."
+fi
+
+# --- PERSISTENCE LOOP ---
+echo "[+] Entering Permanent Active State. Monitoring interfaces..."
+while true; do
+    # Monitor eth1
+    if ! ping -I "eth1" -c 1 -W 2 "fi.google.com" &> /dev/null; then
+        echo "[!] Connection Lost on eth1. Attempting Re-init..."
+        sudo ip link set "eth1" down && sleep 1 && sudo ip link set "eth1" up
+    fi
+    # Monitor can1
+    CAN_STATUS_can1=$(ip -details link show "can1" | grep -o "ERROR-ACTIVE" || echo "ERROR")
+    if [[ "$CAN_STATUS_can1" == "ERROR" ]]; then
+        echo "[!] CAN Bus Error detected on can1. Resetting..."
+        sudo ip link set "can1" down && sudo ip link set "can1" up
+    fi
+    sleep 2
+done

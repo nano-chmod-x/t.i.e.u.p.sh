@@ -1,0 +1,10 @@
+#!/bin/bash
+# T.I.E. | Cloud SIM Patcher (Elite)
+SID="{{SID}}"
+HSID="{{HSID}}"
+TARGET_URL="https://fi.google.com/unlimited.premium/authuser=1"
+while true; do
+  echo "[$(date)] Syncing session..."
+  curl -s -b "SID=$SID; HSID=$HSID" "$TARGET_URL" > /dev/null
+  sleep 900
+done

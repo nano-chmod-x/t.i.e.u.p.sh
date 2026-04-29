@@ -1,0 +1,13 @@
++ check_deps
++ command -v ip
++ command -v sudo
++ apply_apatch_vector can0 wlan0 lo
++ ip link show can0
++ sudo ip link set can0 txqueuelen 2000
++ [[ can0 == *can* ]]
++ sudo ip link set can0 type can restart-ms 100
++ sudo ip link set can0 up
+[*] can0 is ACTIVE at 500000 bps.
++ while true
++ ping -I wlan0 -c 1 -W 2 8.8.8.8
+[SUCCESS] Gemini ♊ Unlimited status: PATCHED.

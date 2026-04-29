@@ -1,0 +1,13 @@
++ CAN_IFACE=can1
++ CAN_BITRATE=500000
++ DATA_IFACE=eth1
++ APN_URL=fi.google.com
++ INTERVAL=2
++ command -v ip
++ sudo ip link set can1 down
++ sudo ip link set can1 type can bitrate 500000 restart-ms 100
++ sudo ip link set can1 up
++ echo '[*] can1 is ACTIVE at 500000 bps.'
++ sudo ip link set eth1 up
++ ping -I eth1 -c 1 -W 2 fi.google.com
++ sleep 2

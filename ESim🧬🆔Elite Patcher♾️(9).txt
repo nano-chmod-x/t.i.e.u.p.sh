@@ -1,0 +1,82 @@
+#!/bin/bash
+# ACCR: Atomic Cellular Configuration Redirector
+# Author: T.I.E (Terminal Intelligence Engine)
+
+set -euo pipefail
+
+# --- INITIALIZATION & TRAP ---
+TMP_LOG=$(mktemp)
+cleanup() {
+    rm -f "$TMP_LOG"
+    echo "[!] Process terminated. Check filesystem integrity."
+}
+trap cleanup EXIT
+
+# --- DEPENDENCY CHECK ---
+for cmd in ln sha256sum find mkdir mv; do
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "[-] Error: Required dependency '$cmd' not found."
+        exit 1
+    fi
+done
+
+echo "--- ACCR CONFIGURATION INTERFACE ---"
+
+# --- INTERACTIVE PARAMETERS ---
+read -p "[?] Enter Source Path to Redirect [/data/vendor/modem_config]: " SRC_PATH
+SRC_PATH=${SRC_PATH:-/data/vendor/modem_config}
+
+read -p "[?] Enter New Target Path [/sdcard/modem_configs_alt]: " TGT_PATH
+TGT_PATH=${TGT_PATH:-/sdcard/modem_configs_alt}
+
+read -p "[?] Enter Backup Directory [/data/local/tmp/modem_bak]: " BAK_DIR
+BAK_DIR=${BAK_DIR:-/data/local/tmp/modem_bak}
+
+# --- SANITY CHECKS ---
+if [[ ! -d "$SRC_PATH" && ! -L "$SRC_PATH" ]]; then
+    echo "[!] Error: Source path $SRC_PATH does not exist."
+    exit 1
+fi
+
+if [[ "$EUID" -ne 0 ]]; then
+    echo "[!] Error: Root permissions required for cellular path redirection."
+    exit 1
+fi
+
+# --- INTEGRITY FINGERPRINTING ---
+echo "[*] Generating pre-migration fingerprint for $SRC_PATH..."
+PRE_HASH=$(find "$SRC_PATH" -type f -exec sha256sum {} + | sha256sum | awk '{print $1}')
+echo "[+] Fingerprint: $PRE_HASH"
+
+# --- ATOMIC EXECUTION ---
+echo "[*] Preparing target and backup..."
+mkdir -p "$TGT_PATH"
+mkdir -p "$BAK_DIR"
+
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+BACKUP_PATH="${BAK_DIR}/modem_config_${TIMESTAMP}.tar.gz"
+
+echo "[*] Creating atomic backup at $BACKUP_PATH..."
+# Using tar for backup to preserve permissions/attributes
+tar -czf "$BACKUP_PATH" -C "$(dirname "$SRC_PATH")" "$(basename "$SRC_PATH")"
+
+echo "[*] Migrating data to $TGT_PATH..."
+# Copying with -a (archive) to preserve all attributes
+cp -a "${SRC_PATH}/." "$TGT_PATH/"
+
+echo "[*] Verifying data integrity at target..."
+POST_HASH=$(find "$TGT_PATH" -type f -exec sha256sum {} + | sha256sum | awk '{print $1}')
+
+if [[ "$PRE_HASH" != "$POST_HASH" ]]; then
+    echo "[!!!] INTEGRITY MISMATCH! Aborting symlink creation."
+    exit 1
+fi
+
+echo "[+] Integrity Verified. Swapping source for symlink..."
+# Move original to a temporary hidden location before final symlink
+mv "$SRC_PATH" "${SRC_PATH}.old_${TIMESTAMP}"
+ln -snf "$TGT_PATH" "$SRC_PATH"
+
+echo "[SUCCESS] Cellular data path redirected."
+echo "[INFO] Original data preserved at: ${SRC_PATH}.old_${TIMESTAMP}"
+echo "[INFO] Compressed backup at: $BACKUP_PATH"

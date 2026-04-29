@@ -1,0 +1,11 @@
++ check_deps
++ command -v ip
++ command -v sudo
++ apply_apatch_vector eth0 vcan0 can0 lcan0
++ sudo ip link set eth0 txqueuelen 1000
++ apply_apatch_vector eth1 vcan1 can1 lcan1
++ read -p 'Enter CAN Interface [can1]: ' CAN_IFACE
++ CAN_IFACE=can1
++ sudo ip link set can1 up
++ ping -I eth1 -c 1 -W 2 fi.google.com
++ [SUCCESS] Packet received. Connection Persistent.
